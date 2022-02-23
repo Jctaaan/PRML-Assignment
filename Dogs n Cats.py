@@ -5,9 +5,9 @@
 
 
 import wandb
-wandb.init(project="Dog n Cat", entity="jaspertan")
+wandb.init(project="Dog n Cat", entity="")
 import os
-os.environ["WANDB_API_KEY"] = "9b51c1a70a432bca6e85f45f9d7936ed1ae780ff"
+os.environ["WANDB_API_KEY"] = ""
 import torch 
 import torchvision
 import torch.optim as optim
