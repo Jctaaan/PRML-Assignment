@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 import wandb
 wandb.init(project="Autopoetry", entity="")
@@ -17,7 +15,6 @@ import torchvision.transforms as transforms
 import torch.autograd as autograd
 import torch.nn.functional as F
 from torch.utils.data import Dataset,DataLoader
-#import pandas as pd
 import copy
 import matplotlib
 import matplotlib.pyplot as plt
@@ -27,9 +24,6 @@ from sklearn.model_selection import train_test_split
 torch.manual_seed(2020)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
-
-
-# In[174]:
 
 
 def prepareData():
@@ -45,9 +39,6 @@ def prepareData():
     return dataloader, ix2word, word2ix
 
 
-# In[2]:
-
-
 def view_poem(data, itx):
     word_data = np.zeros((1,data.shape[1]),dtype=np.str)
     # 这样初始化后值会保留第一一个字符，所以输出中'<START>' 变成了'<'
@@ -57,9 +48,6 @@ def view_poem(data, itx):
     #print(word_data.shape)
     print(' '.join(word_data[0,k] for k in range(word_data.shape[1])) )
     #print(word_data[2])
-
-
-# In[4]:
 
 
 class PoetryModel(nn.Module):
@@ -90,10 +78,6 @@ class PoetryModel(nn.Module):
         output = self.out(output)
         output = output.reshape(batch_size * seq_len, -1)
         return output, hidden
-
-
-# In[4]:
-
 
 def train(model, device, loader, optimizer, epoch):
     model.train()
@@ -163,9 +147,6 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, config.T_max)
 
 
 
-# In[ ]:
-
-
 for epoch in range(config.epochs):
     train(model,device,dataloader,optimizer, epoch)
     scheduler.step()
@@ -176,9 +157,6 @@ for epoch in range(config.epochs):
         if os.path.exists("epoch-%d.pth" %(epoch-1)):
             os.remove("epoch-%d.pth" %(epoch-1)) 
 #test(model,device,test_loader,epoch)
-
-
-# In[10]:
 
 
 datas = np.load("tang.npz",allow_pickle = True)
@@ -196,17 +174,11 @@ model = net.to(device)
 model.load_state_dict(torch.load('epoch-31.pth'))
 
 
-# In[11]:
-
-
 def p_choose(weights): # 以概率选字
         prob = F.softmax(weights[0],dim=0).cpu().numpy()
         t = np.cumsum(prob)
         index = int(np.searchsorted(t, np.random.rand(1)))
         return index
-
-
-# In[12]:
 
 
 def generate(model, start_words, ix2word, word2ix):
@@ -233,9 +205,6 @@ def generate(model, start_words, ix2word, word2ix):
                 del results[-1]
                 break
         return results
-
-
-# In[13]:
 
 
 def head_generate(model, start_words, poem_len, ix2word, word2ix):
@@ -274,13 +243,9 @@ def head_generate(model, start_words, poem_len, ix2word, word2ix):
         return results
 
 
-# In[36]:
-
 
 print(head_generate(model,'湖光秋月',5,ix2word,word2ix))
 
-
-# In[15]:
 
 
 ''.join(generate(model,'湖光秋月两相和，',ix2word,word2ix))
