@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 import wandb
 wandb.init(project="Dog n Cat", entity="")
@@ -16,7 +14,6 @@ import numpy as np
 import torchvision.transforms as transforms
 import torch.autograd as autograd
 import torch.nn.functional as F
-#import pandas as pd
 import copy
 import matplotlib
 import matplotlib.pyplot as plt
@@ -26,9 +23,6 @@ from sklearn.model_selection import train_test_split
 torch.manual_seed(2020)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
-
-
-# In[2]:
 
 
 class ResBlock(nn.Module):
@@ -90,9 +84,6 @@ class ResNet34(nn.Module):
         return x
 
 
-# In[3]:
-
-
 def train(model, device, loader, optimizer, epoch):
     model.train()
     criterion = nn.CrossEntropyLoss()
@@ -114,9 +105,6 @@ def train(model, device, loader, optimizer, epoch):
             test(model,device,test_loader,epoch)
 
 
-# In[4]:
-
-
 def test(model, device, loader, epoch):
     model.eval()
     criterion = nn.CrossEntropyLoss(reduction='sum')
@@ -136,9 +124,6 @@ def test(model, device, loader, epoch):
     print('Avg Loss : %.3f , Accuracy : %.3f [%d/%d] \n' % (avg_loss, correct/total, correct, total) )
     wandb.log({"Test Loss": avg_loss, "Test Acc": correct/total})
     return correct
-
-
-# In[5]:
 
 
 transform = transforms.Compose([
@@ -166,14 +151,8 @@ test_loader = torch.utils.data.DataLoader(data_all, batch_size=1000,
                                           sampler=test_sampler)
 
 
-# In[7]:
-
-
 net = ResNet34()
 model = net.to(device)
-#使用wandb存储当前参数
-#os.environ["WANDB_RUN_ID"] = "3fsha086"
-wandb.init(project="dog-vs-cat",reinit=True)#,resume = true)
 wandb.watch(model, log="all")
 config = wandb.config          # Initialize config
 config.batch_size = 50          # input batch size for training (default: 64)
@@ -194,16 +173,12 @@ optimizer = optim.SGD(model.parameters(),
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[2,5,10,20], gamma=0.5)
 
 
-# In[ ]:
-
 
 for epoch in range(config.epochs):
     train(model,device,train_loader,optimizer, epoch)
     scheduler.step()
 test(model,device,test_loader,epoch)
 
-
-# In[14]:
 
 
 torch.save(model.state_dict(), "12k-iter.pth")
