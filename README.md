@@ -1,3 +1,3 @@
 # PRML-Assignment
 
-4 basic DL training in PRML course
+4 basic DL trainings in PRML course
